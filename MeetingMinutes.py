@@ -1,6 +1,7 @@
 import sublime, sublime_plugin
 import os
 import re
+from subprocess import call
 
 from .mistune import markdown
 
@@ -19,6 +20,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		with open(html_file, 'w+') as file_:
 			file_.write(html_source)
 
+		self.save_pdf(html_file)
 		print(file_name)
 		print(html_file)
 
@@ -28,4 +30,8 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
 		return f
 
+	def save_pdf(self, html_file):
+		pdf_file = self.change_extension(html_file, ".pdf")
+		call(["wkhtmltopdf",html_file,pdf_file])
 
+		

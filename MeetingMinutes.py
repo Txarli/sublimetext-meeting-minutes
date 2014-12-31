@@ -4,13 +4,15 @@ import re
 
 from .mistune import markdown
 
+HTML_START = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>'
+HTML_END = '</body></html>'
 
 class CreateMinuteCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		region = sublime.Region(0, self.view.size())
 		md_source = self.view.substr(region)
 		md_source.encode(encoding='UTF-8',errors='strict')
-		html_source = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>' + markdown(md_source) + '</body></html>'
+		html_source = HTML_START + markdown(md_source) + HTML_END
 		
 		file_name = self.view.file_name()
 		html_file = self.change_extension(file_name, ".html")

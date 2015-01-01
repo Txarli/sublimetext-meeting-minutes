@@ -61,7 +61,10 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		for assistant in meeting_assistants_list:
 			meeting_assistants += '<li>' + assistant + '</li>'
 
-		header_source += meeting_assistants + '</ul></div><div class="header-right"><img src="img/logo.jpg" width="100%"></div></div>'
+		header_source += meeting_assistants + '</ul></div><div class="header-right"><img src="'
+		
+		logo_path = '/home/txarli/Projects/Tests/header/img/logo.jpg'
+		header_source += logo_path + '" width="100%"></div></div>'
 
 		return header_source
 

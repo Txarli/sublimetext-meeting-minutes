@@ -51,7 +51,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 	def create_header(self):
 		header_source = '<div class="header-parent"><div class="header-left"><h3>Fecha: '
 		meeting_date = time.strftime("%d/%m/%Y")
-		header_source += meeting_date + ' </h3><h4>Asistentes</h4><ul>'
+		header_source += meeting_date + ' </h3><h4>Asistentes:</h4><ul>'
 
 		json_file = '/home/txarli/Projects/Tests/markdown/assistants.sublime-meetings'
 		with open(json_file) as file_:
@@ -62,7 +62,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 			meeting_assistants += '<li>' + assistant + '</li>'
 
 		header_source += meeting_assistants + '</ul></div><div class="header-right"><img src="'
-		
+
 		logo_path = '/home/txarli/Projects/Tests/header/img/logo.jpg'
 		header_source += logo_path + '" width="100%"></div></div>'
 

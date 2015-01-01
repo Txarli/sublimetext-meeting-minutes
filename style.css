@@ -2,20 +2,21 @@
     width: 100%;
     border: 1px solid #c1c1c1;
     border-radius: 2px;
-    margin-bottom: 15px;
     clear:both;
     overflow: hidden;
 }
 .header-left{
     float: left;
     width:60%;
-    padding: 5px;
+    padding: 10px;
 
 }
 .header-right {
     float: right;
     vertical-align: 50%;
     width:35%;
+    padding: 10px;
+
 }
 
 /*

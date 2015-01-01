@@ -53,8 +53,8 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		meeting_date = time.strftime("%d/%m/%Y")
 		header_source += meeting_date + ' </h3><h4>Asistentes:</h4><ul>'
 
-		json_file = '/home/txarli/Projects/Tests/markdown/assistants.sublime-meetings'
-		with open(json_file) as file_:
+		assistants_file = '/home/txarli/Projects/Tests/markdown/assistants.sublime-meetings'
+		with open(assistants_file) as file_:
 			meeting_assistants_list = file_.read().splitlines()
 
 		meeting_assistants = ''

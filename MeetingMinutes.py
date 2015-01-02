@@ -7,8 +7,10 @@ import json
 
 from .mistune import markdown
 
+ASSISTANTS_INPUT_MESSAGE = 'Write the meeting assistant list, separated with commas'
+
 HTML_START = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>'
-BODY_END = "</body>"
+BODY_END = '</body>'
 HTML_END = '</html>'
 
 HEADER_SETTING_NAME = "template"
@@ -68,4 +70,41 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
 		return header_source
 
-		
+
+class WriteAssistantsCommand (sublime_plugin.TextCommand):
+	def run(self, edit):
+		window = self.view.window()
+
+		assistants_file = self.get_assistants_file()
+		with open(assistants_file) as file_:
+			assistants = file_.read()
+
+		if assistants:
+			initial_text = re.sub('\n', ', ', assistants)
+		else:
+			initial_text = ''
+
+		window.show_input_panel(ASSISTANTS_INPUT_MESSAGE, initial_text, self.save_assistants, self.save_assistants, self.cancel_assistants)
+
+	def save_assistants(self, assistants_list):
+		assistants = assistants_list.split(',')
+		assistants_doc = ''
+		for assistant in assistants:
+			assistant = re.sub('^([^\s]*)(\s)', '', assistant)
+			assistant += '\n'
+			assistants_doc += assistant
+
+		assistants_file = self.get_assistants_file()
+		with open(assistants_file, 'w+') as file_:
+				file_.write(assistants_doc)
+
+	def cancel_assistants(self):
+		pass
+
+	def get_assistants_file(self):
+		markdown_file = self.view.file_name()
+		assistants_directory = os.path.dirname(markdown_file)
+		assistants_file = assistants_directory + '/assistants.sublime-meetings'
+
+		return assistants_file
+

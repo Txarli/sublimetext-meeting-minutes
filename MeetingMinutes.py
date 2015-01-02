@@ -10,6 +10,9 @@ from .mistune import markdown
 ASSISTANTS_INPUT_MESSAGE = 'Write the meeting assistant list, separated with commas'
 LOGO_INPUT_MESSAGE = 'Write the logo path'
 
+ASSISTANTS_FILE_NAME = '/attendees.sublime-meetings'
+LOGO_FILE_NAME = '/logo.sublime-meetings'
+
 HTML_START = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>'
 BODY_END = '</body>'
 HTML_END = '</html>'
@@ -50,11 +53,14 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		call(["wkhtmltopdf",html_file,pdf_file])
 
 	def create_header(self):
+		markdown_file = self.view.file_name()
+		markdown_dir = os.path.dirname(markdown_file)
+
 		header_source = '<div class="header-parent"><div class="header-left"><h3>Fecha: '
 		meeting_date = time.strftime("%d/%m/%Y")
 		header_source += meeting_date + ' </h3><h4>Asistentes:</h4><ul>'
 
-		assistants_file = '/home/txarli/Projects/Tests/markdown/assistants.sublime-meetings'
+		assistants_file = markdown_dir + ASSISTANTS_FILE_NAME
 		with open(assistants_file) as file_:
 			meeting_assistants_list = file_.read().splitlines()
 
@@ -64,8 +70,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
 		header_source += meeting_assistants + '</ul></div><div class="header-right">'
 
-		markdown_file = self.view.file_name()
-		logo_file_path = os.path.dirname(markdown_file) + '/logo.sublime-meetings'
+		logo_file_path = markdown_dir + LOGO_FILE_NAME
 		print(logo_file_path)
 
 		if os.path.isfile(logo_file_path):
@@ -83,9 +88,12 @@ class WriteAssistantsCommand (sublime_plugin.TextCommand):
 		window = self.view.window()
 
 		assistants_file = self.get_assistants_file()
-		with open(assistants_file) as file_:
-			assistants = file_.read()
-
+		if os.path.isfile(assistants_file):
+			with open(assistants_file) as file_:
+				assistants = file_.read()
+		else:
+			assistants = None
+			
 		if assistants:
 			initial_text = re.sub('\n', ', ', assistants)
 		else:
@@ -112,7 +120,7 @@ class WriteAssistantsCommand (sublime_plugin.TextCommand):
 	def get_assistants_file(self):
 		markdown_file = self.view.file_name()
 		assistants_directory = os.path.dirname(markdown_file)
-		assistants_file = assistants_directory + '/assistants.sublime-meetings'
+		assistants_file = assistants_directory + ASSISTANTS_FILE_NAME
 
 		return assistants_file
 
@@ -140,6 +148,6 @@ class WriteLogoCommand (sublime_plugin.TextCommand):
 	def get_logo_file(self):
 		markdown_file = self.view.file_name()
 		logo_directory = os.path.dirname(markdown_file)
-		logo_file = logo_directory + '/logo.sublime-meetings'
+		logo_file = logo_directory + LOGO_FILE_NAME
 
 		return logo_file

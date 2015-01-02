@@ -1,3 +1,10 @@
 [
-    { "caption": "Sublime Minutes: Create ", "command": "create_minute" }
+    { 
+	    "caption": "Sublime Minutes: Create ",
+	    "command": "create_minute" 
+    },
+    {
+    	"caption": "Sublime Minutes: Write assistants",
+    	"command": "write_assistants"
+    }
 ]

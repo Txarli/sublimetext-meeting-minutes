@@ -6,5 +6,9 @@
     {
     	"caption": "Sublime Minutes: Write assistants",
     	"command": "write_assistants"
+    },
+    {
+    	"caption": "Sublime Minutes: Pick logo",
+    	"command": "write_logo"
     }
 ]

@@ -9,6 +9,7 @@ Easily write meeting minutes using markdown in Sublime Text 3. Export it in Gith
     + Date
     + Attendees
     + Logo
+- **Nowadays the header is created only in Spanish!** I'll do my best to change it to other languages.
 
 ## Instalation:
 

@@ -37,7 +37,7 @@ You can write your markdown minute in a normal text file. With this text written
 - **Sublime Meetings: Pick logo**. Opens a prompt where you can write the logo file path (it should be an image file). It saves the path in a file called ``logo.sublime-minutes``.
 - **Sublime Meetings: Create**. Saves the minute in pdf and html.
 
-Support and collaboration:
+## Support and collaboration:
 - Write your suggestions, bugs, etc. in the [issues](https://github.com/Txarli/sublimetext-meeting-minutes/issues) page.
 - Please, do all the forks and pull request submits you want.
 

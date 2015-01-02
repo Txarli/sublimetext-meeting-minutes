@@ -90,9 +90,10 @@ class WriteAssistantsCommand (sublime_plugin.TextCommand):
 		assistants = assistants_list.split(',')
 		assistants_doc = ''
 		for assistant in assistants:
-			assistant = re.sub('^([^\s]*)(\s)', '', assistant)
-			assistant += '\n'
-			assistants_doc += assistant
+			assistant = re.sub('^(^[\s]*)(\s)', '', assistant)
+			if assistant != '':
+				assistant += '\n'
+				assistants_doc += assistant
 
 		assistants_file = self.get_assistants_file()
 		with open(assistants_file, 'w+') as file_:

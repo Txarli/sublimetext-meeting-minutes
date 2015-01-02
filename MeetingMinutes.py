@@ -8,12 +8,11 @@ import json
 from .mistune import markdown
 
 ASSISTANTS_INPUT_MESSAGE = 'Write the meeting assistant list, separated with commas'
+LOGO_INPUT_MESSAGE = 'Write the logo path'
 
 HTML_START = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>'
 BODY_END = '</body>'
 HTML_END = '</html>'
-
-HEADER_SETTING_NAME = "template"
 
 class CreateMinuteCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
@@ -40,6 +39,8 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
 		self.save_pdf(html_file)
 
+		get_path()
+
 	def change_extension(self,file_name, new_ext):
 		f, ext = os.path.splitext(file_name)
 		f += new_ext
@@ -64,7 +65,6 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 			meeting_assistants += '<li>' + assistant + '</li>'
 
 		header_source += meeting_assistants + '</ul></div><div class="header-right"><img src="'
-
 		logo_path = '/home/txarli/Projects/Tests/header/img/logo.jpg'
 		header_source += logo_path + '" width="100%"></div></div>'
 
@@ -109,3 +109,30 @@ class WriteAssistantsCommand (sublime_plugin.TextCommand):
 
 		return assistants_file
 
+class WriteLogoCommand (sublime_plugin.TextCommand):
+	def run(self, edit):
+		window = self.view.window()
+
+		logo_file = self.get_logo_file()
+		if os.path.isfile(logo_file):
+			with open(logo_file) as file_:
+				logo_path = file_.read()
+		else:
+			logo_path = ''
+
+		window.show_input_panel(ASSISTANTS_INPUT_MESSAGE, logo_path, self.save_logo, self.save_logo, self.cancel_assistants)
+
+	def save_logo(self, logo_path):
+		logo_file = self.get_logo_file()
+		with open(logo_file, 'w+') as file_:
+				file_.write(logo_path)
+
+	def cancel_assistants(self):
+		pass
+
+	def get_logo_file(self):
+		markdown_file = self.view.file_name()
+		logo_directory = os.path.dirname(markdown_file)
+		logo_file = logo_directory + '/logo.sublime-meetings'
+
+		return logo_file

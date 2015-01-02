@@ -33,9 +33,9 @@ It's highly recommended to install the [Markdown Preview](https://github.com/rev
 
 You can write your markdown minute in a normal text file. With this text written, you can use this commands from the command palette (``ctrl+shift+P``):
 
-- **Sublime Meetings: Write attendees**: Opens a prompt where you can write the attendees list, sepparated with commas. It saves them in a file called ``assistants.sublime-minutes``.
-- **Sublime Meetings: Pick logo**: Opens a prompt where you can write the logo file path (it should be an image file). It saves the path in a file called ``logo.sublime-minutes``.
-- **Sublime Meetings: Create**: Saves the minute in pdf and html.
+- **Sublime Meetings: Write attendees**. Opens a prompt where you can write the attendees list, sepparated with commas. It saves them in a file called ``assistants.sublime-minutes``.
+- **Sublime Meetings: Pick logo**. Opens a prompt where you can write the logo file path (it should be an image file). It saves the path in a file called ``logo.sublime-minutes``.
+- **Sublime Meetings: Create**. Saves the minute in pdf and html.
 
 Support and collaboration:
 - Write your suggestions, bugs, etc. in the [issues](https://github.com/Txarli/sublimetext-meeting-minutes/issues) page.
@@ -44,4 +44,4 @@ Support and collaboration:
 **And remember, I'm a starter with this project, so be kind!**
 
 ## License:
-The code is in github under a MIT License.
+The code is in github under a [MIT License](https://github.com/Txarli/sublimetext-meeting-minutes/blob/master/LICENSE.md).

@@ -39,8 +39,6 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
 		self.save_pdf(html_file)
 
-		get_path()
-
 	def change_extension(self,file_name, new_ext):
 		f, ext = os.path.splitext(file_name)
 		f += new_ext
@@ -64,9 +62,18 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		for assistant in meeting_assistants_list:
 			meeting_assistants += '<li>' + assistant + '</li>'
 
-		header_source += meeting_assistants + '</ul></div><div class="header-right"><img src="'
-		logo_path = '/home/txarli/Projects/Tests/header/img/logo.jpg'
-		header_source += logo_path + '" width="100%"></div></div>'
+		header_source += meeting_assistants + '</ul></div><div class="header-right">'
+
+		markdown_file = self.view.file_name()
+		logo_file_path = os.path.dirname(markdown_file) + '/logo.sublime-meetings'
+		print(logo_file_path)
+
+		if os.path.isfile(logo_file_path):
+			with open(logo_file_path) as file_:
+				logo_path = file_.read()
+			header_source += '<img src="' + logo_path + '" width="100%">'
+
+		header_source += '</div></div>'
 
 		return header_source
 

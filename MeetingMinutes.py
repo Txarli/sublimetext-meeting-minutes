@@ -127,7 +127,7 @@ class WriteLogoCommand (sublime_plugin.TextCommand):
 		else:
 			logo_path = ''
 
-		window.show_input_panel(ASSISTANTS_INPUT_MESSAGE, logo_path, self.save_logo, self.save_logo, self.cancel_assistants)
+		window.show_input_panel(LOGO_INPUT_MESSAGE, logo_path, self.save_logo, self.save_logo, self.cancel_assistants)
 
 	def save_logo(self, logo_path):
 		logo_file = self.get_logo_file()

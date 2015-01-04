@@ -7,6 +7,9 @@ import json
 
 from .mistune import markdown
 
+import gettext
+gettext.install('MeetingMinutes', '/home/txarli/.config/sublime-text-3/Packages/sublimetext-meeting-minutes/lang')
+
 ASSISTANTS_INPUT_MESSAGE = 'Write the meeting assistant list, separated with commas'
 LOGO_INPUT_MESSAGE = 'Write the logo path'
 
@@ -53,12 +56,15 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		call(["wkhtmltopdf",html_file,pdf_file])
 
 	def create_header(self):
+		lang = gettext.translation('MeetingMinutes', localedir='/home/txarli/.config/sublime-text-3/Packages/sublimetext-meeting-minutes/lang', languages=['eu'])
+		lang.install()
+
 		markdown_file = self.view.file_name()
 		markdown_dir = os.path.dirname(markdown_file)
 
-		header_source = '<div class="header-parent"><div class="header-left"><h3>Fecha: '
+		header_source = '<div class="header-parent"><div class="header-left"><h3>' + _('Date') + ': '
 		meeting_date = time.strftime("%d/%m/%Y")
-		header_source += meeting_date + ' </h3><h4>Asistentes:</h4><ul>'
+		header_source += meeting_date + ' </h3><h4>' + _('Atendees') + ':</h4><ul>'
 
 		assistants_file = markdown_dir + ASSISTANTS_FILE_NAME
 		with open(assistants_file) as file_:

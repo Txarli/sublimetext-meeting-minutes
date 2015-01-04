@@ -56,14 +56,15 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		call(["wkhtmltopdf",html_file,pdf_file])
 
 	def create_header(self):
-		lang = gettext.translation('MeetingMinutes', localedir='/home/txarli/.config/sublime-text-3/Packages/sublimetext-meeting-minutes/lang', languages=['eu'])
+		lang = gettext.translation('MeetingMinutes', localedir='/home/txarli/.config/sublime-text-3/Packages/sublimetext-meeting-minutes/lang', languages=['es'])
 		lang.install()
 
 		markdown_file = self.view.file_name()
 		markdown_dir = os.path.dirname(markdown_file)
 
 		header_source = '<div class="header-parent"><div class="header-left"><h3>' + _('Date') + ': '
-		meeting_date = time.strftime("%d/%m/%Y")
+		date_format = _('%d/%m/%Y')
+		meeting_date = time.strftime(date_format)
 		header_source += meeting_date + ' </h3><h4>' + _('Atendees') + ':</h4><ul>'
 
 		assistants_file = markdown_dir + ASSISTANTS_FILE_NAME

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-01-04 16:13+CET\n"
+"POT-Creation-Date: 2015-01-04 17:26+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,11 +15,15 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: MeetingMinutes.py:64
+#: MeetingMinutes.py:65
 msgid "Date"
 msgstr ""
 
 #: MeetingMinutes.py:66
+msgid "%d/%m/%Y"
+msgstr ""
+
+#: MeetingMinutes.py:67
 msgid "Atendees"
 msgstr ""
 

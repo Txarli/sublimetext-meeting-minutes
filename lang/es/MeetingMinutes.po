@@ -5,10 +5,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MeetingMinutes\n"
-"POT-Creation-Date: 2015-01-04 16:13+CET\n"
-"PO-Revision-Date: 2015-01-04 17:11+0100\n"
+"POT-Creation-Date: 2015-01-04 17:26+CET\n"
+"PO-Revision-Date: 2015-01-04 17:36+0100\n"
 "Last-Translator: Aitor Carlos Urrutia Aranburu <contact@aitorcurrutia.com>\n"
 "Language-Team: Aitor Urrutia <contact@aitorcurrutia.com>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,11 +20,15 @@ msgstr ""
 "X-Poedit-SearchPath-0: es\n"
 "X-Poedit-SearchPath-1: eu\n"
 
-#: MeetingMinutes.py:64
+#: MeetingMinutes.py:65
 msgid "Date"
 msgstr "Fecha"
 
 #: MeetingMinutes.py:66
+msgid "%d/%m/%Y"
+msgstr "%d/%m/%Y"
+
+#: MeetingMinutes.py:67
 msgid "Atendees"
 msgstr "Asistentes"
 

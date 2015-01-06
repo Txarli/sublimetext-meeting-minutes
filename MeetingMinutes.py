@@ -28,34 +28,37 @@ HTML_END = '</html>'
 
 class CreateMinuteCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
-		html_source = HTML_START
+		html_source = []
+		html_source.append(HTML_START)
 
 		header_source = self.create_header()
-		html_source += header_source
+		html_source.append(header_source)
 
 		region = sublime.Region(0, self.view.size())
 		md_source = self.view.substr(region)
 		md_source.encode(encoding='UTF-8',errors='strict')
-		html_source += markdown(md_source) + BODY_END
+		html_source.append(markdown(md_source))
+		html_source.append(BODY_END)
 
 		css_file = "/home/txarli/.config/sublime-text-3/Packages/sublimetext-meeting-minutes/style.css"
 		with open(css_file) as file_:
 			css_source = file_.read()
-		html_source += '<style>' + css_source + '</style>' + HTML_END
+		html_source.append('<style>%s</style>%s' % (css_source, HTML_END))
 
 
 		file_name = self.view.file_name()
 		html_file = self.change_extension(file_name, ".html")
+		html_source_code = ''.join(html_source)
 		with open(html_file, 'w+') as file_:
-			file_.write(html_source)
+			file_.write(html_source_code)
 
 		self.save_pdf(html_file)
+		print(html_source)
+		print('Created minute.')
 
 	def change_extension(self,file_name, new_ext):
 		f, ext = os.path.splitext(file_name)
-		f += new_ext
-
-		return f
+		return '%s%s' % (f, new_ext)
 
 	def save_pdf(self, html_file):
 		pdf_file = self.change_extension(html_file, ".pdf")

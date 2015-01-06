@@ -12,6 +12,8 @@ import gettext
 PACKAGE_PATH = os.path.dirname(__file__)
 LANG_PATH = PACKAGE_PATH + '/lang'
 
+DEFAULT_LANG_CODE = 'eu'
+
 ASSISTANTS_INPUT_MESSAGE = 'Write the meeting assistant list, separated with commas'
 LOGO_INPUT_MESSAGE = 'Write the logo path'
 LANGUAGE_INPUT_MESSAGE = 'Write the language code'
@@ -60,11 +62,18 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		call(["wkhtmltopdf",html_file,pdf_file])
 
 	def create_header(self):
-		lang = gettext.translation('MeetingMinutes', localedir=LANG_PATH, languages=['en'])
-		lang.install()
-
 		markdown_file = self.view.file_name()
 		markdown_dir = os.path.dirname(markdown_file)
+
+		language_file = markdown_dir + LANG_FILE_NAME
+		if os.path.isfile(language_file):
+			with open(language_file) as file_:
+				lang_code = file_.read()
+		else:
+			lang_code = DEFAULT_LANG_CODE
+
+		lang = gettext.translation('MeetingMinutes', localedir=LANG_PATH, languages=[lang_code])
+		lang.install()
 
 		header_source = '<div class="header-parent"><div class="header-left"><h3>' + _('Date') + ': '
 		date_format = _('%d/%m/%Y')
@@ -170,7 +179,7 @@ class ChangeLanguageCommand(sublime_plugin.TextCommand):
 		language_file = self.get_language_file()
 		if os.path.isfile(language_file):
 			with open(language_file) as file_:
-				lang = file_.read(file_)
+				lang = file_.read()
 		else:
 			lang = ''
 

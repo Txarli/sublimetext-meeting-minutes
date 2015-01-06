@@ -7,11 +7,20 @@ import json
 
 from .mistune import markdown
 
+import gettext
+
+PACKAGE_PATH = os.path.dirname(__file__)
+LANG_PATH = PACKAGE_PATH + '/lang'
+
+DEFAULT_LANG_CODE = 'eu'
+
 ASSISTANTS_INPUT_MESSAGE = 'Write the meeting assistant list, separated with commas'
 LOGO_INPUT_MESSAGE = 'Write the logo path'
+LANGUAGE_INPUT_MESSAGE = 'Write the language code'
 
 ASSISTANTS_FILE_NAME = '/attendees.sublime-meetings'
 LOGO_FILE_NAME = '/logo.sublime-meetings'
+LANG_FILE_NAME = '/language.sublime-meetings'
 
 HTML_START = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>'
 BODY_END = '</body>'
@@ -56,9 +65,20 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		markdown_file = self.view.file_name()
 		markdown_dir = os.path.dirname(markdown_file)
 
-		header_source = '<div class="header-parent"><div class="header-left"><h3>Fecha: '
-		meeting_date = time.strftime("%d/%m/%Y")
-		header_source += meeting_date + ' </h3><h4>Asistentes:</h4><ul>'
+		language_file = markdown_dir + LANG_FILE_NAME
+		if os.path.isfile(language_file):
+			with open(language_file) as file_:
+				lang_code = file_.read()
+		else:
+			lang_code = DEFAULT_LANG_CODE
+
+		lang = gettext.translation('MeetingMinutes', localedir=LANG_PATH, languages=[lang_code])
+		lang.install()
+
+		header_source = '<div class="header-parent"><div class="header-left"><h3>' + _('Date') + ': '
+		date_format = _('%d/%m/%Y')
+		meeting_date = time.strftime(date_format)
+		header_source += meeting_date + ' </h3><h4>' + _('Atendees') + ':</h4><ul>'
 
 		assistants_file = markdown_dir + ASSISTANTS_FILE_NAME
 		with open(assistants_file) as file_:
@@ -71,7 +91,6 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		header_source += meeting_assistants + '</ul></div><div class="header-right">'
 
 		logo_file_path = markdown_dir + LOGO_FILE_NAME
-		print(logo_file_path)
 
 		if os.path.isfile(logo_file_path):
 			with open(logo_file_path) as file_:
@@ -151,3 +170,32 @@ class WriteLogoCommand (sublime_plugin.TextCommand):
 		logo_file = logo_directory + LOGO_FILE_NAME
 
 		return logo_file
+
+class ChangeLanguageCommand(sublime_plugin.TextCommand):
+	"""docstring for ChangeLanguageCommand"""
+	def run(self, edit):
+		window = self.view.window()
+
+		language_file = self.get_language_file()
+		if os.path.isfile(language_file):
+			with open(language_file) as file_:
+				lang = file_.read()
+		else:
+			lang = ''
+
+		window.show_input_panel(LANGUAGE_INPUT_MESSAGE, lang, self.save_language, self.save_language, self.cancel_language)
+
+	def save_language(self, lang):
+		language_file = self.get_language_file()
+		with open(language_file, 'w+') as file_:
+			file_.write(lang)
+
+	def cancel_language(self):
+		pass
+
+	def get_language_file(self):
+		markdown_file = self.view.file_name()
+		lang_directory = os.path.dirname(markdown_file)
+		lang_file = lang_directory + LANG_FILE_NAME
+
+		return lang_file

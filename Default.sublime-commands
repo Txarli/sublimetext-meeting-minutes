@@ -4,8 +4,12 @@
 	    "command": "create_minute" 
     },
     {
-    	"caption": "Sublime Minutes: Write attendees",
-    	"command": "write_assistants"
+        "caption": "Sublime Minutes: Write attendees",
+        "command": "write_assistants"
+    },
+    {
+        "caption": "Sublime Minutes: Change language",
+        "command": "change_language"
     },
     {
     	"caption": "Sublime Minutes: Pick logo",

@@ -14,9 +14,11 @@ LANG_PATH = PACKAGE_PATH + '/lang'
 
 ASSISTANTS_INPUT_MESSAGE = 'Write the meeting assistant list, separated with commas'
 LOGO_INPUT_MESSAGE = 'Write the logo path'
+LANGUAGE_INPUT_MESSAGE = 'Write the language code'
 
 ASSISTANTS_FILE_NAME = '/attendees.sublime-meetings'
 LOGO_FILE_NAME = '/logo.sublime-meetings'
+LANG_FILE_NAME = '/language.sublime-meetings'
 
 HTML_START = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>'
 BODY_END = '</body>'
@@ -58,7 +60,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		call(["wkhtmltopdf",html_file,pdf_file])
 
 	def create_header(self):
-		lang = gettext.translation('MeetingMinutes', localedir=LANG_PATH, languages=['es'])
+		lang = gettext.translation('MeetingMinutes', localedir=LANG_PATH, languages=['en'])
 		lang.install()
 
 		markdown_file = self.view.file_name()
@@ -159,3 +161,32 @@ class WriteLogoCommand (sublime_plugin.TextCommand):
 		logo_file = logo_directory + LOGO_FILE_NAME
 
 		return logo_file
+
+class ChangeLanguageCommand(sublime_plugin.TextCommand):
+	"""docstring for ChangeLanguageCommand"""
+	def run(self, edit):
+		window = self.view.window()
+
+		language_file = self.get_language_file()
+		if os.path.isfile(language_file):
+			with open(language_file) as file_:
+				lang = file_.read(file_)
+		else:
+			lang = ''
+
+		window.show_input_panel(LANGUAGE_INPUT_MESSAGE, lang, self.save_language, self.save_language, self.cancel_language)
+
+	def save_language(self, lang):
+		language_file = self.get_language_file()
+		with open(language_file, 'w+') as file_:
+			file_.write(lang)
+
+	def cancel_language(self):
+		pass
+
+	def get_language_file(self):
+		markdown_file = self.view.file_name()
+		lang_directory = os.path.dirname(markdown_file)
+		lang_file = lang_directory + LANG_FILE_NAME
+
+		return lang_file

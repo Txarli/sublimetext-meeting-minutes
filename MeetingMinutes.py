@@ -53,7 +53,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 			file_.write(html_source_code)
 
 		self.save_pdf(html_file)
-		print(html_source)
+
 		print('Created minute.')
 
 	def change_extension(self,file_name, new_ext):
@@ -78,31 +78,37 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		lang = gettext.translation('MeetingMinutes', localedir=LANG_PATH, languages=[lang_code])
 		lang.install()
 
-		header_source = '<div class="header-parent"><div class="header-left"><h3>' + _('Date') + ': '
+		header_source = []
+		header_source.append('<div class="header-parent"><div class="header-left"><h3>')
+		header_source.append('%s: ' % _('Date'))
 		date_format = _('%d/%m/%Y')
 		meeting_date = time.strftime(date_format)
-		header_source += meeting_date + ' </h3><h4>' + _('Atendees') + ':</h4><ul>'
+		header_source.append(meeting_date)
+		header_source.append('</h3><h4>%s:</h4><ul>' % _('Atendees'))
 
 		assistants_file = markdown_dir + ASSISTANTS_FILE_NAME
 		with open(assistants_file) as file_:
 			meeting_assistants_list = file_.read().splitlines()
 
-		meeting_assistants = ''
+		meeting_assistants = []
 		for assistant in meeting_assistants_list:
-			meeting_assistants += '<li>' + assistant + '</li>'
+			meeting_assistants.append('<li>%s</li>' % assistant)
 
-		header_source += meeting_assistants + '</ul></div><div class="header-right">'
 
-		logo_file_path = markdown_dir + LOGO_FILE_NAME
+		header_source.append(''.join(meeting_assistants))
+		header_source.append('</ul></div><div class="header-right">')
+
+		logo_file_path = '%s%s' % (markdown_dir, LOGO_FILE_NAME)
 
 		if os.path.isfile(logo_file_path):
 			with open(logo_file_path) as file_:
 				logo_path = file_.read()
-			header_source += '<img src="' + logo_path + '" width="100%">'
+			print(logo_path)
+			header_source.append('<img src="%s">' % logo_path)
 
-		header_source += '</div></div>'
+		header_source.append('</div></div>')
 
-		return header_source
+		return ''.join(header_source)
 
 
 class WriteAssistantsCommand (sublime_plugin.TextCommand):

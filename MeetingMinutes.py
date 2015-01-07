@@ -30,6 +30,10 @@ def change_extension(file_name, new_ext):
 	f, ext = os.path.splitext(file_name)
 	return '%s%s' % (f, new_ext)
 
+def load_file(filename):
+	with open(filename) as file_:
+		return file_.read()
+
 class CreateMinuteCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		html_source = []
@@ -45,8 +49,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		html_source.append(BODY_END)
 
 		css_file = "/home/txarli/.config/sublime-text-3/Packages/sublimetext-meeting-minutes/style.css"
-		with open(css_file) as file_:
-			css_source = file_.read()
+		css_source = load_file(css_file)
 		html_source.append('<style>%s</style>%s' % (css_source, HTML_END))
 
 
@@ -101,9 +104,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		logo_file_path = '%s%s' % (markdown_dir, LOGO_FILE_NAME)
 
 		if os.path.isfile(logo_file_path):
-			with open(logo_file_path) as file_:
-				logo_path = file_.read()
-			print(logo_path)
+			logo_path = load_file(logo_file_path)
 			header_source.append('<img src="%s">' % logo_path)
 
 		header_source.append('</div></div>')
@@ -117,8 +118,7 @@ class WriteAssistantsCommand (sublime_plugin.TextCommand):
 
 		assistants_file = self.get_assistants_file()
 		if os.path.isfile(assistants_file):
-			with open(assistants_file) as file_:
-				assistants = file_.read()
+			assistants = load_file(assistants_file)
 		else:
 			assistants = None
 			
@@ -158,8 +158,7 @@ class WriteLogoCommand (sublime_plugin.TextCommand):
 
 		logo_file = self.get_logo_file()
 		if os.path.isfile(logo_file):
-			with open(logo_file) as file_:
-				logo_path = file_.read()
+			logo_path = load_file(logo_file)
 		else:
 			logo_path = ''
 
@@ -187,8 +186,7 @@ class ChangeLanguageCommand(sublime_plugin.TextCommand):
 
 		language_file = self.get_language_file()
 		if os.path.isfile(language_file):
-			with open(language_file) as file_:
-				lang = file_.read()
+			lang = load_file(language_file)
 		else:
 			lang = ''
 

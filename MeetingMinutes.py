@@ -26,6 +26,10 @@ HTML_START = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>'
 BODY_END = '</body>'
 HTML_END = '</html>'
 
+def change_extension(file_name, new_ext):
+	f, ext = os.path.splitext(file_name)
+	return '%s%s' % (f, new_ext)
+
 class CreateMinuteCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		html_source = []
@@ -47,7 +51,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
 
 		file_name = self.view.file_name()
-		html_file = self.change_extension(file_name, ".html")
+		html_file = change_extension(file_name, ".html")
 		html_source_code = ''.join(html_source)
 		with open(html_file, 'w+') as file_:
 			file_.write(html_source_code)
@@ -56,12 +60,8 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
 		print('Created minute.')
 
-	def change_extension(self,file_name, new_ext):
-		f, ext = os.path.splitext(file_name)
-		return '%s%s' % (f, new_ext)
-
 	def save_pdf(self, html_file):
-		pdf_file = self.change_extension(html_file, ".pdf")
+		pdf_file = change_extension(html_file, ".pdf")
 		call(["wkhtmltopdf",html_file,pdf_file])
 
 	def create_header(self):

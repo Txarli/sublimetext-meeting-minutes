@@ -34,6 +34,11 @@ def load_file(filename):
 	with open(filename) as file_:
 		return file_.read()
 
+def write_file(filename, text):
+	with open(filename, 'w+') as file_:
+		file_.write(text)
+
+
 class CreateMinuteCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		html_source = []
@@ -56,8 +61,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		file_name = self.view.file_name()
 		html_file = change_extension(file_name, ".html")
 		html_source_code = ''.join(html_source)
-		with open(html_file, 'w+') as file_:
-			file_.write(html_source_code)
+		write_file(html_file, html_source_code)
 
 		self.save_pdf(html_file)
 
@@ -73,8 +77,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
 		language_file = markdown_dir + LANG_FILE_NAME
 		if os.path.isfile(language_file):
-			with open(language_file) as file_:
-				lang_code = file_.read()
+				lang_code = load_file(language_file)
 		else:
 			lang_code = DEFAULT_LANG_CODE
 
@@ -90,8 +93,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 		header_source.append('</h3><h4>%s:</h4><ul>' % _('Atendees'))
 
 		assistants_file = markdown_dir + ASSISTANTS_FILE_NAME
-		with open(assistants_file) as file_:
-			meeting_assistants_list = file_.read().splitlines()
+		meeting_assistants_list = load_file(assistants_file).splitlines()
 
 		meeting_assistants = []
 		for assistant in meeting_assistants_list:
@@ -139,8 +141,7 @@ class WriteAssistantsCommand (sublime_plugin.TextCommand):
 				assistants_doc += assistant
 
 		assistants_file = self.get_assistants_file()
-		with open(assistants_file, 'w+') as file_:
-				file_.write(assistants_doc)
+		write_file(assistants_file, assistants_doc)
 
 	def cancel_assistants(self):
 		pass
@@ -166,8 +167,7 @@ class WriteLogoCommand (sublime_plugin.TextCommand):
 
 	def save_logo(self, logo_path):
 		logo_file = self.get_logo_file()
-		with open(logo_file, 'w+') as file_:
-				file_.write(logo_path)
+		write_file(logo_file, logo_path)
 
 	def cancel_assistants(self):
 		pass
@@ -194,8 +194,7 @@ class ChangeLanguageCommand(sublime_plugin.TextCommand):
 
 	def save_language(self, lang):
 		language_file = self.get_language_file()
-		with open(language_file, 'w+') as file_:
-			file_.write(lang)
+		write_file(language_file, lang)
 
 	def cancel_language(self):
 		pass

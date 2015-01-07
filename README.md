@@ -9,7 +9,6 @@ Easily write meeting minutes using markdown in Sublime Text 3. Export it in Gith
     + Date
     + Attendees
     + Logo
-- **Nowadays the header is created only in Spanish!** I'll do my best to change it to other languages ASAP.
 
 ## Instalation:
 
@@ -34,7 +33,14 @@ It's highly recommended to install the [Markdown Preview](https://github.com/rev
 You can write your markdown minute in a normal text file. With this text written, you can use this commands from the command palette (``ctrl+shift+P``):
 
 - **Sublime Meetings: Write attendees**. Opens a prompt where you can write the attendees list, sepparated with commas. It saves them in a file called ``assistants.sublime-minutes``.
+
 - **Sublime Meetings: Pick logo**. Opens a prompt where you can write the logo file path (it should be an image file). It saves the path in a file called ``logo.sublime-minutes``.
+
+- **Sublime Meetings: Change language**. Opens a prompt where you can write the code for the language you want to create the header in. It saves the path in a file called ``logo.sublime-minutes``. These are the available options:
+	+ ``eu``: Basque.
+	+ ``es``: Spanish.
+	+ ``en``: English.
+
 - **Sublime Meetings: Create**. Saves the minute in pdf and html.
 
 ## Support and collaboration:

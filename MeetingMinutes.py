@@ -38,6 +38,14 @@ def write_file(filename, text):
 	with open(filename, 'w+') as file_:
 		file_.write(text)
 
+def get_configuration_file(markdown_file, file_name):
+	assistants_directory = []
+
+	assistants_directory.append(os.path.dirname(markdown_file))
+	assistants_directory.append(file_name)
+
+	return ''.join(assistants_directory)
+
 
 class CreateMinuteCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
@@ -118,7 +126,7 @@ class WriteAssistantsCommand (sublime_plugin.TextCommand):
 	def run(self, edit):
 		window = self.view.window()
 
-		assistants_file = self.get_assistants_file()
+		assistants_file = get_configuration_file(self.view.file_name(), ASSISTANTS_FILE_NAME)
 		if os.path.isfile(assistants_file):
 			assistants = load_file(assistants_file)
 		else:
@@ -140,24 +148,17 @@ class WriteAssistantsCommand (sublime_plugin.TextCommand):
 				assistant += '\n'
 				assistants_doc += assistant
 
-		assistants_file = self.get_assistants_file()
+		assistants_file = get_configuration_file(self.view.file_name(), ASSISTANTS_FILE_NAME)
 		write_file(assistants_file, assistants_doc)
 
 	def cancel_assistants(self):
 		pass
 
-	def get_assistants_file(self):
-		markdown_file = self.view.file_name()
-		assistants_directory = os.path.dirname(markdown_file)
-		assistants_file = assistants_directory + ASSISTANTS_FILE_NAME
-
-		return assistants_file
-
 class WriteLogoCommand (sublime_plugin.TextCommand):
 	def run(self, edit):
 		window = self.view.window()
 
-		logo_file = self.get_logo_file()
+		logo_file = get_configuration_file(self.view.file_name(), LOGO_FILE_NAME)
 		if os.path.isfile(logo_file):
 			logo_path = load_file(logo_file)
 		else:
@@ -166,25 +167,18 @@ class WriteLogoCommand (sublime_plugin.TextCommand):
 		window.show_input_panel(LOGO_INPUT_MESSAGE, logo_path, self.save_logo, self.save_logo, self.cancel_assistants)
 
 	def save_logo(self, logo_path):
-		logo_file = self.get_logo_file()
+		logo_file = get_configuration_file(self.view.file_name(), LOGO_FILE_NAME)
 		write_file(logo_file, logo_path)
 
 	def cancel_assistants(self):
 		pass
-
-	def get_logo_file(self):
-		markdown_file = self.view.file_name()
-		logo_directory = os.path.dirname(markdown_file)
-		logo_file = logo_directory + LOGO_FILE_NAME
-
-		return logo_file
 
 class ChangeLanguageCommand(sublime_plugin.TextCommand):
 	"""docstring for ChangeLanguageCommand"""
 	def run(self, edit):
 		window = self.view.window()
 
-		language_file = self.get_language_file()
+		language_file = get_configuration_file(self.view.file_name(), LANG_FILE_NAME)
 		if os.path.isfile(language_file):
 			lang = load_file(language_file)
 		else:
@@ -193,15 +187,8 @@ class ChangeLanguageCommand(sublime_plugin.TextCommand):
 		window.show_input_panel(LANGUAGE_INPUT_MESSAGE, lang, self.save_language, self.save_language, self.cancel_language)
 
 	def save_language(self, lang):
-		language_file = self.get_language_file()
+		language_file = get_configuration_file(self.view.file_name(), LANG_FILE_NAME)
 		write_file(language_file, lang)
 
 	def cancel_language(self):
 		pass
-
-	def get_language_file(self):
-		markdown_file = self.view.file_name()
-		lang_directory = os.path.dirname(markdown_file)
-		lang_file = lang_directory + LANG_FILE_NAME
-
-		return lang_file

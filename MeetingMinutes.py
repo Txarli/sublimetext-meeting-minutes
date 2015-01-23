@@ -14,8 +14,7 @@ LANG_PATH = PACKAGE_PATH + '/lang'
 
 DEFAULT_LANG_CODE = 'eu'
 
-ASSISTANTS_INPUT_MESSAGE = 'Write the meeting assistant list,\
-                            separated with commas'
+ASSISTANTS_INPUT_MESSAGE = 'Write the meeting assistant list separated with commas'
 LOGO_INPUT_MESSAGE = 'Write the logo path'
 LANGUAGE_INPUT_MESSAGE = 'Write the language code'
 
@@ -30,8 +29,8 @@ BODY_END = '</body>'
 HTML_END = '</html>'
 
 def change_extension(file_name, new_ext):
-    f, ext = os.path.splitext(file_name)
-    return '%s%s' % (f, new_ext)
+    name = os.path.splitext(file_name)
+    return '%s%s' % (name, new_ext)
 
 def load_file(filename):
     with open(filename) as file_:
@@ -49,21 +48,23 @@ def get_configuration_file(markdown_file, file_name):
 
     return ''.join(assistants_directory)
 
+def save_pdf(html_file):
+    pdf_file = change_extension(html_file, ".pdf")
+    call(["wkhtmltopdf", html_file, pdf_file])
 
 def load_configuration_attr(view, attr):
-    #conf_file = get_configuration_file(view, ASSISTANTS_FILE_NAME)
-    #project_file = load_file(conf_file)
-    #project_json = json.loads('{"attendees": ["Aitor Urrutia", "Jon Martinikorena"]}') #json.loads(project_file)
-    #return project_json[attr]
-    return ["Aitor asd", "Jon asdf"]
+    conf_file = get_configuration_file(view, ASSISTANTS_FILE_NAME)
+    project_file = load_file(conf_file)
+    project_json = json.loads(project_file)
+    return project_json[attr]
 
 def save_configuration_attr(view, attr, value):
     conf_file = get_configuration_file(view, ASSISTANTS_FILE_NAME)
     project_file = load_file(conf_file)
     project_json = json.loads(project_file)
     project_json[attr] = str(value)
-    with open(conf_file, 'w') as file_:
-        json.dump(project_json, conf_file)
+    with open(conf_file, 'w+') as file_:
+        json.dump(project_json, file_)
 
 class CreateMinuteCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -79,8 +80,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
         html_source.append(markdown(md_source))
         html_source.append(BODY_END)
 
-        css_file = "/home/txarli/.config/sublime-text-3/Packages/\
-                    sublimetext-meeting-minutes/style.css"
+        css_file = "/home/txarli/.config/sublime-text-3/Packages/sublimetext-meeting-minutes/style.css"
         css_source = load_file(css_file)
         html_source.append('<style>%s</style>%s' % (css_source, HTML_END))
 
@@ -90,13 +90,9 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
         html_source_code = ''.join(html_source)
         write_file(html_file, html_source_code)
 
-        self.save_pdf(html_file)
+        save_pdf(html_file)
 
         print('Created minute.')
-
-    def save_pdf(self, html_file):
-        pdf_file = change_extension(html_file, ".pdf")
-        call(["wkhtmltopdf", html_file, pdf_file])
 
     def create_header(self):
         markdown_file = self.view.file_name()
@@ -108,9 +104,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
         else:
             lang_code = DEFAULT_LANG_CODE
 
-        lang = gettext.translation('MeetingMinutes', \
-                                    localedir=LANG_PATH, \
-                                    languages=[lang_code])
+        lang = gettext.translation('MeetingMinutes', localedir=LANG_PATH, languages=[lang_code])
         lang.install()
 
         header_source = []
@@ -148,24 +142,15 @@ class WriteAssistantsCommand (sublime_plugin.TextCommand):
     def run(self, edit):
         window = self.view.window()
 
-        assistants_file = get_configuration_file(self.view.file_name(), \
-                                                    ASSISTANTS_FILE_NAME)
+        assistants_file = get_configuration_file(self.view.file_name(), ASSISTANTS_FILE_NAME)
         if os.path.isfile(assistants_file):
-            assistants = load_configuration_attr(self.view.file_name(), \
-                                                    'attendees')
+            assistants = eval(load_configuration_attr(self.view.file_name(), 'attendees'))
         else:
-            assistants = []
-            
-        if assistants:
-            initial_text = ', '.join(assistants)
-        else:
-            initial_text = ''
+            assistants = ''
+        print(type(assistants))
+        initial_text = ', '.join(assistants)
 
-        window.show_input_panel(ASSISTANTS_INPUT_MESSAGE, \
-                                initial_text, \
-                                self.save_assistants, \
-                                self.save_assistants, \
-                                self.cancel_assistants)
+        window.show_input_panel(ASSISTANTS_INPUT_MESSAGE, initial_text, self.save_assistants, None, None)
 
     def save_assistants(self, assistants_list):
         assistants = assistants_list.split(',')
@@ -175,12 +160,7 @@ class WriteAssistantsCommand (sublime_plugin.TextCommand):
             if assistant != '':
                 assistants_doc.append(assistant)
 
-        save_configuration_attr(self.view.file_name(), \
-                                "attendees", \
-                                assistants_doc)
-
-    def cancel_assistants(self):
-        pass
+        save_configuration_attr(self.view.file_name(), "attendees", assistants_doc)
 
 class WriteLogoCommand (sublime_plugin.TextCommand):
     def run(self, edit):
@@ -193,22 +173,16 @@ class WriteLogoCommand (sublime_plugin.TextCommand):
         else:
             logo_path = ''
 
-        window.show_input_panel(LOGO_INPUT_MESSAGE, \
-                                logo_path, \
-                                self.save_logo, \
-                                self.save_logo, \
-                                self.cancel_assistants)
+        window.show_input_panel(LOGO_INPUT_MESSAGE, logo_path, self.save_logo, self.save_logo, self.cancel_assistants)
 
     def save_logo(self, logo_path):
-        logo_file = get_configuration_file(self.view.file_name(), \
-                                            LOGO_FILE_NAME)
+        logo_file = get_configuration_file(self.view.file_name(), LOGO_FILE_NAME)
         write_file(logo_file, logo_path)
 
     def cancel_assistants(self):
         pass
 
 class ChangeLanguageCommand(sublime_plugin.TextCommand):
-    """docstring for ChangeLanguageCommand"""
     def run(self, edit):
         window = self.view.window()
 
@@ -218,15 +192,10 @@ class ChangeLanguageCommand(sublime_plugin.TextCommand):
         else:
             lang = ''
 
-        window.show_input_panel(LANGUAGE_INPUT_MESSAGE, \
-                                lang, \
-                                self.save_language, \
-                                self.save_language, \
-                                self.cancel_language)
+        window.show_input_panel(LANGUAGE_INPUT_MESSAGE, lang, self.save_language, self.save_language, self.cancel_language)
 
     def save_language(self, lang):
-        language_file = get_configuration_file(self.view.file_name(), \
-                                                LANG_FILE_NAME)
+        language_file = get_configuration_file(self.view.file_name(), LANG_FILE_NAME)
         write_file(language_file, lang)
 
     def cancel_language(self):

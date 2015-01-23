@@ -53,16 +53,26 @@ def save_pdf(html_file):
     call(["wkhtmltopdf", html_file, pdf_file])
 
 def load_configuration_attr(view, attr):
-    conf_file = get_configuration_file(view, ASSISTANTS_FILE_NAME)
+    conf_file = get_configuration_file(view, CONFIGURATION_FILE_NAME)
     project_file = load_file(conf_file)
     project_json = json.loads(project_file)
-    return project_json[attr]
+
+    if attr in project_json:
+        return project_json[attr]
+    else:
+        return ''
 
 def save_configuration_attr(view, attr, value):
-    conf_file = get_configuration_file(view, ASSISTANTS_FILE_NAME)
-    project_file = load_file(conf_file)
-    project_json = json.loads(project_file)
-    project_json[attr] = str(value)
+    conf_file = get_configuration_file(view, CONFIGURATION_FILE_NAME)
+
+    if os.path.isfile(conf_file):        
+        project_file = load_file(conf_file)
+        project_json = json.loads(project_file)
+        project_json[attr] = str(value)
+    else:
+        project_json = {}
+        project_json[attr] = str(value)
+
     with open(conf_file, 'w+') as file_:
         json.dump(project_json, file_)
 
@@ -142,11 +152,11 @@ class WriteAssistantsCommand (sublime_plugin.TextCommand):
     def run(self, edit):
         window = self.view.window()
 
-        assistants_file = get_configuration_file(self.view.file_name(), ASSISTANTS_FILE_NAME)
+        assistants_file = get_configuration_file(self.view.file_name(), CONFIGURATION_FILE_NAME)
         if os.path.isfile(assistants_file):
             assistants = eval(load_configuration_attr(self.view.file_name(), 'attendees'))
         else:
-            assistants = ''
+            assistants = []
         print(type(assistants))
         initial_text = ', '.join(assistants)
 
@@ -166,37 +176,28 @@ class WriteLogoCommand (sublime_plugin.TextCommand):
     def run(self, edit):
         window = self.view.window()
 
-        logo_file = get_configuration_file(self.view.file_name(), \
-                                            LOGO_FILE_NAME)
-        if os.path.isfile(logo_file):
-            logo_path = load_file(logo_file)
+        conf_file = get_configuration_file(self.view.file_name(), CONFIGURATION_FILE_NAME)
+        if os.path.isfile(conf_file):
+            logo_path = load_configuration_attr(self.view.file_name(), 'logo-path')
         else:
             logo_path = ''
 
-        window.show_input_panel(LOGO_INPUT_MESSAGE, logo_path, self.save_logo, self.save_logo, self.cancel_assistants)
+        window.show_input_panel(LOGO_INPUT_MESSAGE, logo_path, self.save_logo, None, None)
 
     def save_logo(self, logo_path):
-        logo_file = get_configuration_file(self.view.file_name(), LOGO_FILE_NAME)
-        write_file(logo_file, logo_path)
-
-    def cancel_assistants(self):
-        pass
+        save_configuration_attr(self.view.file_name(), "logo-path", logo_path)
 
 class ChangeLanguageCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         window = self.view.window()
 
-        language_file = get_configuration_file(self.view.file_name(), LANG_FILE_NAME)
-        if os.path.isfile(language_file):
-            lang = load_file(language_file)
+        conf_file = get_configuration_file(self.view.file_name(), CONFIGURATION_FILE_NAME)
+        if os.path.isfile(conf_file):
+            lang = load_configuration_attr(self.view.file_name(), 'language')
         else:
             lang = ''
 
-        window.show_input_panel(LANGUAGE_INPUT_MESSAGE, lang, self.save_language, self.save_language, self.cancel_language)
+        window.show_input_panel(LANGUAGE_INPUT_MESSAGE, lang, self.save_language, None, None)
 
     def save_language(self, lang):
-        language_file = get_configuration_file(self.view.file_name(), LANG_FILE_NAME)
-        write_file(language_file, lang)
-
-    def cancel_language(self):
-        pass
+        save_configuration_attr(self.view.file_name(), "language", lang)

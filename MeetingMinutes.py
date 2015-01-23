@@ -18,10 +18,6 @@ ASSISTANTS_INPUT_MESSAGE = 'Write the meeting assistant list separated with comm
 LOGO_INPUT_MESSAGE = 'Write the logo path'
 LANGUAGE_INPUT_MESSAGE = 'Write the language code'
 
-ASSISTANTS_FILE_NAME = '/attendees.sublime-meetings'
-LOGO_FILE_NAME = '/logo.sublime-meetings'
-LANG_FILE_NAME = '/language.sublime-meetings'
-
 CONFIGURATION_FILE_NAME = '/project.sublime-meetings'
 
 HTML_START = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>'

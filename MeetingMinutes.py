@@ -12,7 +12,6 @@ import gettext
 PACKAGE_PATH = os.path.dirname(__file__)
 LANG_PATH = PACKAGE_PATH + '/lang'
 
-DEFAULT_LANG_CODE = 'eu'
 AVAILABLE_LANGUAGES = ['eu', 'en', 'es']
 
 ASSISTANTS_INPUT_MESSAGE = 'Write the meeting assistant list separated with commas'

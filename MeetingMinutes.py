@@ -98,7 +98,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
         save_pdf(html_file)
 
-        print('Minute created.')
+        print('Minute creation finished.')
 
     def create_header(self):
         markdown_file = self.view.file_name()

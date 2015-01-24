@@ -26,7 +26,7 @@ BODY_END = '</body>'
 HTML_END = '</html>'
 
 def change_extension(file_name, new_ext):
-    name = os.path.splitext(file_name)
+    name, ext = os.path.splitext(file_name)
     return '%s%s' % (name, new_ext)
 
 def load_file(filename):
@@ -57,7 +57,7 @@ def load_configuration_attr(view, attr):
     if attr in project_json:
         return project_json[attr]
     else:
-        return ''
+        return None
 
 def save_configuration_attr(view, attr, value):
     conf_file = get_configuration_file(view, CONFIGURATION_FILE_NAME)
@@ -73,8 +73,20 @@ def save_configuration_attr(view, attr, value):
     with open(conf_file, 'w+') as file_:
         json.dump(project_json, file_)
 
+def load_configuration(view):
+    conf_file = get_configuration_file(view, CONFIGURATION_FILE_NAME)
+
+    if os.path.isfile(conf_file):
+        project_file = load_file(conf_file)
+        project_json = json.loads(project_file)
+
+        return project_json
+    else:
+        return None
+
 class CreateMinuteCommand(sublime_plugin.TextCommand):
     def run(self, edit):
+
         html_source = []
         html_source.append(HTML_START)
 
@@ -94,6 +106,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
         file_name = self.view.file_name()
         html_file = change_extension(file_name, ".html")
+        print(html_file)
         html_source_code = ''.join(html_source)
         write_file(html_file, html_source_code)
 
@@ -102,14 +115,16 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
         print('Minute creation finished.')
 
     def create_header(self):
+
+        project_json = load_configuration(self.view.file_name())
+
+        if self.check_project_json(project_json):
+            project_json = load_configuration(self.view.file_name())
+
         markdown_file = self.view.file_name()
         markdown_dir = os.path.dirname(markdown_file)
 
-        language_file = markdown_dir + LANG_FILE_NAME
-        if os.path.isfile(language_file):
-            lang_code = load_file(language_file)
-        else:
-            lang_code = DEFAULT_LANG_CODE
+        lang_code = project_json["language"]
 
         lang = gettext.translation('MeetingMinutes', localedir=LANG_PATH, languages=[lang_code])
         lang.install()
@@ -123,8 +138,8 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
         header_source.append(meeting_date)
         header_source.append('</h3><h4>%s:</h4><ul>' % _('Atendees'))
 
-        assistants_file = markdown_dir + ASSISTANTS_FILE_NAME
-        meeting_assistants_list = load_file(assistants_file).splitlines()
+        meeting_assistants_list = eval(project_json["attendees"])
+        print(meeting_assistants_list)
 
         meeting_assistants = []
         for assistant in meeting_assistants_list:
@@ -134,28 +149,42 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
         header_source.append(''.join(meeting_assistants))
         header_source.append('</ul></div><div class="header-right">')
 
-        logo_file_path = '%s%s' % (markdown_dir, LOGO_FILE_NAME)
 
-        if os.path.isfile(logo_file_path):
-            logo_path = load_file(logo_file_path)
-            header_source.append('<img src="%s">' % logo_path)
+        logo_path = project_json["logo-path"]
+        header_source.append('<img src="%s">' % logo_path)
 
         header_source.append('</div></div>')
 
         return ''.join(header_source)
 
 
+    def check_project_json(self, project_json):
+        attributes = {\
+            'attendees':'write_assistants',\
+            'language':'change_language',\
+            'logo-path':'write_logo'}
+
+        changed = False
+
+        for attr,command in attributes.items():
+            if not attr in project_json:
+                self.view.run_command(command)
+                changed = True
+
+        return changed
+
 class WriteAssistantsCommand (sublime_plugin.TextCommand):
     def run(self, edit):
         window = self.view.window()
 
-        assistants_file = get_configuration_file(self.view.file_name(), CONFIGURATION_FILE_NAME)
-        if os.path.isfile(assistants_file):
-            assistants = eval(load_configuration_attr(self.view.file_name(), 'attendees'))
+        conf_file = get_configuration_file(self.view.file_name(), CONFIGURATION_FILE_NAME)
+        assistants_attr = load_configuration_attr(self.view.file_name(), 'attendees')
+
+        if os.path.isfile(conf_file) and assistants_attr:
+            assistants = eval(assistants_attr)
+            initial_text = ', '.join(assistants)
         else:
-            assistants = []
-        print(type(assistants))
-        initial_text = ', '.join(assistants)
+            initial_text = ''
 
         window.show_input_panel(ASSISTANTS_INPUT_MESSAGE, initial_text, self.save_assistants, None, None)
 
@@ -174,8 +203,10 @@ class WriteLogoCommand (sublime_plugin.TextCommand):
         window = self.view.window()
 
         conf_file = get_configuration_file(self.view.file_name(), CONFIGURATION_FILE_NAME)
-        if os.path.isfile(conf_file):
-            logo_path = load_configuration_attr(self.view.file_name(), 'logo-path')
+        logo_path_attr = load_configuration_attr(self.view.file_name(), 'logo-path')
+
+        if os.path.isfile(conf_file) and logo_path_attr:
+            logo_path = logo_path_attr
         else:
             logo_path = ''
 

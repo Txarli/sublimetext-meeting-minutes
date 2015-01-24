@@ -13,6 +13,7 @@ PACKAGE_PATH = os.path.dirname(__file__)
 LANG_PATH = PACKAGE_PATH + '/lang'
 
 DEFAULT_LANG_CODE = 'eu'
+AVAILABLE_LANGUAGES = ['eu', 'en', 'es']
 
 ASSISTANTS_INPUT_MESSAGE = 'Write the meeting assistant list separated with commas'
 LOGO_INPUT_MESSAGE = 'Write the logo path'
@@ -187,13 +188,7 @@ class ChangeLanguageCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         window = self.view.window()
 
-        conf_file = get_configuration_file(self.view.file_name(), CONFIGURATION_FILE_NAME)
-        if os.path.isfile(conf_file):
-            lang = load_configuration_attr(self.view.file_name(), 'language')
-        else:
-            lang = ''
-
-        window.show_input_panel(LANGUAGE_INPUT_MESSAGE, lang, self.save_language, None, None)
+        window.show_quick_panel(AVAILABLE_LANGUAGES, self.save_language)
 
     def save_language(self, lang):
-        save_configuration_attr(self.view.file_name(), "language", lang)
+        save_configuration_attr(self.view.file_name(), "language", AVAILABLE_LANGUAGES[lang])

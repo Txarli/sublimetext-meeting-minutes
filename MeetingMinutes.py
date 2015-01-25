@@ -49,9 +49,7 @@ def save_pdf(html_file):
     call(["wkhtmltopdf", html_file, pdf_file])
 
 def load_configuration_attr(view, attr):
-    conf_file = get_configuration_file(view, CONFIGURATION_FILE_NAME)
-    project_file = load_file(conf_file)
-    project_json = json.loads(project_file)
+    project_json = load_configuration(view)
 
     if attr in project_json:
         return project_json[attr]
@@ -61,13 +59,8 @@ def load_configuration_attr(view, attr):
 def save_configuration_attr(view, attr, value):
     conf_file = get_configuration_file(view, CONFIGURATION_FILE_NAME)
 
-    if os.path.isfile(conf_file):        
-        project_file = load_file(conf_file)
-        project_json = json.loads(project_file)
-        project_json[attr] = str(value)
-    else:
-        project_json = {}
-        project_json[attr] = str(value)
+    project_json = load_configuration(view)
+    project_json[attr] = str(value)        
 
     with open(conf_file, 'w+') as file_:
         json.dump(project_json, file_)
@@ -75,13 +68,15 @@ def save_configuration_attr(view, attr, value):
 def load_configuration(view):
     conf_file = get_configuration_file(view, CONFIGURATION_FILE_NAME)
 
+    project_json = {}
     if os.path.isfile(conf_file):
         project_file = load_file(conf_file)
-        project_json = json.loads(project_file)
+        try:
+            project_json = json.loads(project_file)
+        except:
+            pass
 
-        return project_json
-    else:
-        return None
+    return project_json
 
 class CreateMinuteCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -115,10 +110,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
     def create_header(self):
 
-        project_json = load_configuration(self.view.file_name())
-
-        if self.check_project_json(project_json):
-            project_json = load_configuration(self.view.file_name())
+        project_json = self.check_project_json()
 
         markdown_file = self.view.file_name()
         markdown_dir = os.path.dirname(markdown_file)
@@ -157,20 +149,20 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
         return ''.join(header_source)
 
 
-    def check_project_json(self, project_json):
+    def check_project_json(self):
         attributes = {\
             'attendees':'write_assistants',\
             'language':'change_language',\
             'logo-path':'write_logo'}
 
-        changed = False
+        project_json = load_configuration(self.view.file_name())
 
         for attr,command in attributes.items():
             if not attr in project_json:
                 self.view.run_command(command)
-                changed = True
+                project_json[attr] = load_configuration_attr(self.view.file_name(), attr)
 
-        return changed
+        return project_json
 
 class WriteAssistantsCommand (sublime_plugin.TextCommand):
     def run(self, edit):

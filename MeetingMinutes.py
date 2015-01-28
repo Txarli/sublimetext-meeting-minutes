@@ -151,7 +151,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
     def check_project_json(self):
         attributes = {\
-            'attendees':'write_assistants',\
+            'attendees':'write_attendees',\
             'language':'change_language',\
             'logo-path':'write_logo'}
 
@@ -164,7 +164,7 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
         return project_json
 
-class WriteAssistantsCommand (sublime_plugin.TextCommand):
+class WriteAttendeesCommand (sublime_plugin.TextCommand):
     def run(self, edit):
         window = self.view.window()
 

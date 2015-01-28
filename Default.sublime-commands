@@ -5,7 +5,7 @@
     },
     {
         "caption": "Sublime Minutes: Write attendees",
-        "command": "write_assistants"
+        "command": "write_attendees"
     },
     {
         "caption": "Sublime Minutes: Change language",

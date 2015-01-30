@@ -26,8 +26,8 @@ HTML_START = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>'
 BODY_END = '</body>'
 HTML_END = '</html>'
 
-def change_extension(file_name, new_ext):
-    name, ext = os.path.splitext(file_name)
+def change_extension(filename, new_ext):
+    name, ext = os.path.splitext(filename)
     return '%s%s' % (name, new_ext)
 
 def load_file(filename):
@@ -50,25 +50,25 @@ def save_pdf(html_file):
     pdf_file = change_extension(html_file, ".pdf")
     call(["wkhtmltopdf", html_file, pdf_file])
 
-def load_configuration_attr(view, attr):
-    project_json = load_configuration(view)
+def load_configuration_attr(markdown_file, attr):
+    project_json = load_configuration(markdown_file)
 
     if attr in project_json:
         return project_json[attr]
     else:
         return None
 
-def save_configuration_attr(view, attr, value):
-    conf_file = get_configuration_file(view, CONFIGURATION_FILE_NAME)
+def save_configuration_attr(markdown_file, attr, value):
+    conf_file = get_configuration_file(markdown_file, CONFIGURATION_FILE_NAME)
 
-    project_json = load_configuration(view)
+    project_json = load_configuration(markdown_file)
     project_json[attr] = str(value)        
 
     with open(conf_file, 'w+') as file_:
         json.dump(project_json, file_)
 
-def load_configuration(view):
-    conf_file = get_configuration_file(view, CONFIGURATION_FILE_NAME)
+def load_configuration(markdown_file):
+    conf_file = get_configuration_file(markdown_file, CONFIGURATION_FILE_NAME)
 
     project_json = {}
     if os.path.isfile(conf_file):

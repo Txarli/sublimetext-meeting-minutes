@@ -13,6 +13,8 @@ PACKAGE_PATH = os.path.dirname(__file__)
 LANG_PATH = PACKAGE_PATH + '/lang'
 
 AVAILABLE_LANGUAGES = ['eu', 'en', 'es']
+ATTRIBUTES = ['attendees', 'language', 'logo-path']
+
 
 ASSISTANTS_INPUT_MESSAGE = 'Write the meeting assistant list separated with commas'
 LOGO_INPUT_MESSAGE = 'Write the logo path'
@@ -84,8 +86,11 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
         html_source = []
         html_source.append(HTML_START)
 
-        header_source = self.create_header()
-        html_source.append(header_source)
+        if self.check_project_json():
+            header_source = self.create_header()
+            html_source.append(header_source)
+        else:
+            print('No header info.')
 
         region = sublime.Region(0, self.view.size())
         md_source = self.view.substr(region)
@@ -150,19 +155,13 @@ class CreateMinuteCommand(sublime_plugin.TextCommand):
 
 
     def check_project_json(self):
-        attributes = {\
-            'attendees':'write_attendees',\
-            'language':'change_language',\
-            'logo-path':'write_logo'}
-
         project_json = load_configuration(self.view.file_name())
 
-        for attr,command in attributes.items():
+        for attr in ATTRIBUTES:
             if not attr in project_json:
-                self.view.run_command(command)
-                project_json[attr] = load_configuration_attr(self.view.file_name(), attr)
+                return False
 
-        return project_json
+        return True
 
 class WriteAttendeesCommand (sublime_plugin.TextCommand):
     def run(self, edit):
